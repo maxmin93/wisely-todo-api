@@ -7,7 +7,7 @@ DROP TABLE IF EXISTS todo;
 CREATE TABLE todo(
 	id integer primary key autoincrement,
 	name text not null,
-    done integer not null default 0,
+    done boolean not null default 0,
     created text not null default (datetime('now','localtime')),
     updated text not null default (datetime('now','localtime'))
 );

@@ -6,8 +6,8 @@ import { Transform, Expose } from "class-transformer";
 @ObjectType({ description: 'Sub-todo' })
 export class SubtodoDto {
 
-    @Field(() => Int)
-    readonly id: number;
+    @Field(() => Int, { nullable: true })
+    readonly id?: number;
 
     @Field(() => Int)
     readonly sub_id: number;
@@ -50,7 +50,7 @@ export class TodoDto {
 @InputType({ description: 'createTodo' })
 export class CreateTodoDto {
 
-    @Field({ nullable: true })
+    @Field(() => Int, { nullable: true })
     readonly id?: number;
 
     @Field()
@@ -66,6 +66,6 @@ export class UpdateTodoDto extends PickType(PartialType(CreateTodoDto), ['name']
     @Field(() => Boolean)
     readonly done!: boolean;
 
-    // @Field()
-    // readonly subtodos?: Subtodo[];
+    // @Field(() => [SubtodoDto], { nullable: true })
+    // readonly subtodos?: SubtodoDto[];
 }
