@@ -1,6 +1,7 @@
 import { Query, Resolver, Mutation, Args, Int, Parent, ResolveField } from '@nestjs/graphql';
 import { TodoService } from '../todo.service';
 import { TodoDto, CreateTodoDto, UpdateTodoDto, TodoDetailDto } from './todo.dto';
+import { SearchDto, PageTodoDto } from './search.dto';
 import { Todo } from '../model/todo.entity';
 import { defaultFieldResolver } from 'graphql';
 
@@ -22,6 +23,9 @@ export class TodoResolver {
         return await this.todoService.getSubtodosByGrpId(id);
     }
     */
+
+    ///////////////////////////////////////
+    // select
 
     /*
 query {
@@ -69,7 +73,8 @@ query {
 
     /*
     // TodoDetailDto 의 arrtodos 필드와 연결이 되지 않는다
-    // ==> 강제로 넣는 수밖에
+    // ==> 특정 Entity의 특정 Column을 지정하는 방법이 없다.
+    //     수동으로 넣는 수밖에
     @ResolveField('arrtodos', returns => [TodoDto])
     async getArrtodos(@Parent() todo: TodoDetailDto) {
         console.log('grp_todo:', todo);
@@ -77,6 +82,18 @@ query {
         return await this.todoService.getSubtodosByGrpId(id);
     }
     */
+
+    ///////////////////////////////////////
+    // search by conditions
+
+    // GraphQL output type => TodoDto
+    @Query(() => PageTodoDto, { name: "searchTodo" })
+    async searchTodo(@Args('data') data: SearchDto) {
+        return await this.todoService.searchTodos(data);
+    }
+
+    ///////////////////////////////////////
+    // create, update, delete
 
     /*
 mutation {

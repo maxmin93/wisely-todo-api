@@ -250,9 +250,81 @@ query{
 }
 ```
 
+> pagination (Offset-based)
+
+- _cf._ 참고: [Offset-based vs Cursor-based Pagination](https://velog.io/@minsangk/%EC%BB%A4%EC%84%9C-%EA%B8%B0%EB%B0%98-%ED%8E%98%EC%9D%B4%EC%A7%80%EB%84%A4%EC%9D%B4%EC%85%98-Cursor-based-Pagination-%EA%B5%AC%ED%98%84%ED%95%98%EA%B8%B0)
+
+```js
+# Query
+query{
+	searchTodo(data:{
+    page: 1
+  }){
+    total, arrtodos{
+      id
+    }
+  }
+}
+
+# Result
+{
+  "data": {
+    "searchTodo": {
+      "total": 8,
+      "arrtodos": [
+        {
+          "id": 15
+        },
+        {
+          "id": 16
+        },
+        {
+          "id": 18
+        }
+      ]
+    }
+  }
+}
+```
+
+> search : term, done, from_dt, to_dt
+
+```js
+# Query
+query{
+	searchTodo(data:{
+    page: 0,
+    done: true,
+    term: "면도기",
+    from_dt: "2022-04-06"
+  }){
+    total, arrtodos{
+      id, done, name, created
+    }
+  }
+}
+
+# Result
+{
+  "data": {
+    "searchTodo": {
+      "total": 1,
+      "arrtodos": [
+        {
+          "id": 13,
+          "done": true,
+          "name": "면도기 스타터세트",
+          "created": "2022-04-06 12:00:00"
+        }
+      ]
+    }
+  }
+}
+```
+
 ### create, update, delete
 
-> create
+> create (subtodo 처리 제외)
 
 ```js
 # Mutaion
@@ -278,7 +350,7 @@ mutation {
 }
 ```
 
-> update
+> update (subtodo 처리 미완성)
 
 ```js
 # Mutaion
@@ -303,7 +375,7 @@ mutation {
 }
 ```
 
-> delete
+> delete (subtodo 처리 미완성)
 
 ```js
 # Mutaion
@@ -331,7 +403,7 @@ mutation {
   - id 를 제거하고 (grp_id, sub_id)를 복합키로 지정하니 Join 동작에 문제가 생김
 - 수작업(로직)으로 처리
 
-2. DTO `TodoDto` 출력시 `subtodos` 를 `[Int]` 형식으로 변환하려 했는데 실패
+2. DTO `TodoDto` 출력시 `subtodos` 를 `[Int]` 형식으로 변환해 출력하려 했는데 실패
 
 - 더 많은 스터디 필요
 

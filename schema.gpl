@@ -14,11 +14,28 @@ type Mutation {
   updateTodo(data: UpdateTodoDto!): TodoDto!
 }
 
+"""Todo Page"""
+type PageTodoDto {
+  arrtodos: [TodoDto!]!
+  total: Int!
+}
+
 type Query {
+  searchTodo(data: SearchDto!): PageTodoDto!
   todo(id: Int!): TodoDto!
   todoAll: [TodoDto!]!
   todoDetail(id: Int!): TodoDetailDto!
   todos(ids: [Int!]!): [TodoDto!]!
+}
+
+"""searchTodo"""
+input SearchDto {
+  done: Boolean
+  from_dt: String
+  page: Int!
+  size: Int = 5
+  term: String
+  to_dt: String
 }
 
 """Sub-todo ID"""

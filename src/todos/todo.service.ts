@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Todo } from './model/todo.entity';
 import { Subtodo } from './model/subtodo.entity';
 import { TodoDto, CreateTodoDto, UpdateTodoDto, TodoDetailDto } from './graphql/todo.dto';
+import { SearchDto, PageTodoDto, PageTodo } from './graphql/search.dto';
 
 @Injectable()
 export class TodoService {
@@ -53,13 +54,6 @@ export class TodoService {
     ///////////////////////////////////////
     // select
 
-    /*
-SELECT
-    "Todo"."id" AS "Todo_id", "Todo"."name" AS "Todo_name", "Todo"."done" AS "Todo_done", "Todo"."created" AS "Todo_created", "Todo"."updated" AS "Todo_updated",
-    "Todo__subtodos"."id" AS "Todo__subtodos_id", "Todo__subtodos"."sub_id" AS "Todo__subtodos_sub_id", "Todo__subtodos"."grp_id" AS "Todo__subtodos_grp_id"
-FROM "todo" "Todo"
-    LEFT JOIN "subtodo" "Todo__subtodos" ON "Todo__subtodos"."grp_id"="Todo"."id"
-    */
     async getAll(): Promise<Todo[]> {
         // return await this.todoRepository.find({ relations: ["subtodos"] });
         return await this.todoRepository
@@ -92,6 +86,7 @@ FROM "todo" "Todo"
         return todo;
     }
 
+    // for TEST
     async getSubtodosByGrpId(id: number): Promise<Todo[]> {
         const ids: number[] = await this.subtodoRepository.createQueryBuilder("subtodo")
             .where("grp_id = :grp_id", { grp_id: id })
@@ -103,4 +98,35 @@ FROM "todo" "Todo"
         return await this.todoRepository.findByIds(ids);
     }
 
+    ///////////////////////////////////////
+    // search by conditions
+
+    // query = query.andWhere 안해도 되는건가?
+    // https://velog.io/@loakick/Nest.js-TypeORM-%EB%A6%AC%ED%8C%A9%ED%84%B0%EB%A7%81-QueryBuilder
+    private queryByConditions(dto: SearchDto) {
+        let query = this.todoRepository.createQueryBuilder('todo');
+        if (dto.term) {
+            query = query.andWhere("name like :term", { term: '%' + dto.term + '%' });
+        }
+        if (dto.done != undefined) {
+            query = query.andWhere(dto.done ? "done != 0" : "done = 0");
+        }
+        if (dto.from_dt) {  // equal or greater than
+            query = query.andWhere("created > :date", { date: dto.from_dt });
+        }
+        if (dto.to_dt) {    // less than
+            query = query.andWhere("created < :date", { date: dto.to_dt });
+        }
+        return query;
+    }
+
+    async searchTodos(dto: SearchDto) {
+        const query = this.queryByConditions(dto);
+        const total = await query.getCount();
+        const todos = await query
+            .offset(dto.page * dto.size)    // skip
+            .limit(dto.size)                // take
+            .getMany();
+        return new PageTodo(total, todos);
+    }
 }
