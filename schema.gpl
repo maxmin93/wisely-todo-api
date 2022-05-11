@@ -1,0 +1,44 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+"""createTodo"""
+input CreateTodoDto {
+  id: Float
+  name: String!
+}
+
+type Mutation {
+  createTodo(data: CreateTodoDto!): TodoDto!
+  deleteTodo(id: Int!): TodoDto!
+  updateTodo(data: UpdateTodoDto!): TodoDto!
+}
+
+type Query {
+  todo(id: Int!): TodoDto!
+  todoAll: [TodoDto!]!
+  todos(ids: [Int!]!): [TodoDto!]!
+}
+
+"""Sub-todo"""
+type SubtodoDto {
+  id: Int!
+  sub_id: Int!
+}
+
+"""Todo List"""
+type TodoDto {
+  created: String!
+  done: Boolean!
+  id: Int!
+  name: String!
+  subtodos: [SubtodoDto!]!
+  updated: String!
+}
+
+"""updateTodo"""
+input UpdateTodoDto {
+  done: Boolean!
+  id: Int!
+  name: String
+}
