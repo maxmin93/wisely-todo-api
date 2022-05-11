@@ -5,6 +5,7 @@ import { Subtodo } from './model/subtodo.entity';
 import { TodoService } from './todo.service';
 import { TodoController } from './todo.controller';
 import { TodoResolver } from './graphql/todo.resolver';
+import { TestService } from './test.service';
 
 @Module({
     imports: [
@@ -12,7 +13,8 @@ import { TodoResolver } from './graphql/todo.resolver';
     ],
     providers: [
         TodoService,
-        TodoResolver
+        TodoResolver,
+        TestService
     ],
     controllers: [
         TodoController

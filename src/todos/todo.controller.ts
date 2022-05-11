@@ -1,6 +1,7 @@
 import { Controller, Post, Get, Put, Delete, Param, Request, Body, Query } from '@nestjs/common';
 import { UseInterceptors, ClassSerializerInterceptor, ParseIntPipe } from '@nestjs/common';
 import { TodoService } from './todo.service';
+import { TestService } from './test.service';
 import { Todo } from './model/todo.entity';
 
 // default page size
@@ -11,6 +12,7 @@ export class TodoController {
 
     constructor(
         private todoService: TodoService,
+        private testService: TestService,
     ) { }
 
     ///////////////////////////////////////
@@ -32,9 +34,9 @@ export class TodoController {
     @Get('test/:num')
     async test(@Param('num', ParseIntPipe) num: number) {
         switch (num) {
-            case 1: return await this.todoService.test1();  // insert
-            case 2: return await this.todoService.test2();  // update
-            case 3: return await this.todoService.test3();  // delete
+            case 1: return await this.testService.test1();  // insert
+            case 2: return await this.testService.test2();  // update
+            case 3: return await this.testService.test3();  // delete
         }
     }
 }
