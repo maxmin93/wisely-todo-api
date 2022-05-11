@@ -119,7 +119,7 @@ id    sub_id  grp_id
 
 > 모든 Todo 조회
 
-```json
+```js
 # Query
 query {
   todoAll {
@@ -172,7 +172,7 @@ query {
 
 > 특정 `id` 배열로 Todo 조회
 
-```json
+```js
 # Query
 query {
     todos(ids: [12,13,14] ) {
@@ -197,9 +197,9 @@ query {
 }
 ```
 
-> 특정 `id`로 Todo 조회
+> 특정 `id` 로 Todo 조회
 
-```json
+```js
 # Query
 query {
     todo(id:1) {
@@ -218,11 +218,43 @@ query {
 }
 ```
 
+> 특정 `id` 로 하위 Todo 가 포함된 Todo Detail 조회
+
+```js
+# Query
+query{
+  todoDetail(id:11){
+    id, name, done, arrtodos{
+      id, name, done
+    }
+  }
+}
+
+# Result
+{
+  "data": {
+    "todoDetail": {
+      "id": 11,
+      "name": "면도기 제품",
+      "done": false,
+      "arrtodos": [
+        {
+          "id": 12,
+          "name": "리필면도날 4개입",
+          "done": true
+        },
+        ...
+      ]
+    }
+  }
+}
+```
+
 ### create, update, delete
 
 > create
 
-```json
+```js
 # Mutaion
 mutation {
   createTodo(data:{
@@ -248,7 +280,7 @@ mutation {
 
 > update
 
-```json
+```js
 # Mutaion
 mutation {
   updateTodo(data:{
@@ -273,7 +305,7 @@ mutation {
 
 > delete
 
-```json
+```js
 # Mutaion
 mutation {
   deleteTodo(id:2) {
@@ -296,6 +328,7 @@ mutation {
 1. Entity `Subtodo` 의 Primary Key로 (grp_id, sub_id) 를 사용하려 했는데 실패
 
 - 별도의 id 를 사용하면 중복 관리가 되지 않음
+  - id 를 제거하고 (grp_id, sub_id)를 복합키로 지정하니 Join 동작에 문제가 생김
 - 수작업(로직)으로 처리
 
 2. DTO `TodoDto` 출력시 `subtodos` 를 `[Int]` 형식으로 변환하려 했는데 실패

@@ -36,6 +36,8 @@ export class Todo {
         this.updated = moment().format("YYYY-MM-DD HH:mm:ss");
     }
 
+    arrtodos?: Todo[] = undefined;
+
     // 이것도 작동하지 않음
     // readonly arrtodos: number[] = undefined;
     // @AfterLoad()

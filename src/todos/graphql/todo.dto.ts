@@ -3,7 +3,7 @@ import { Todo } from "../model/todo.entity";
 import { Subtodo } from "../model/subtodo.entity";
 import { Transform, Expose } from "class-transformer";
 
-@ObjectType({ description: 'Sub-todo' })
+@ObjectType({ description: 'Sub-todo ID' })
 export class SubtodoDto {
 
     @Field(() => Int, { nullable: true })
@@ -31,7 +31,7 @@ export class TodoDto {
     @Field()
     readonly updated: string;
 
-    @Field(() => [SubtodoDto])
+    @Field(() => [SubtodoDto], { description: 'only IDs' })
     readonly subtodos: SubtodoDto[];
 
     // @Field(() => [Int])
@@ -45,6 +45,31 @@ export class TodoDto {
     //     const ids = todo.subtodos.map(r => r.sub_id);
     //     this.subtodos = todo.subtodos ? Int32Array.from(ids) : Int32Array.of();
     // }
+}
+
+@ObjectType({ description: 'Todo Detail' })
+export class TodoDetailDto
+// extends PickType(PartialType(TodoDto), [
+//     'id', 'name', 'done', 'created', 'updated'
+// ])
+{
+    @Field(() => Int)
+    readonly id: number;
+
+    @Field()
+    readonly name: string;
+
+    @Field()
+    readonly done: boolean;
+
+    @Field()
+    readonly created: string;
+
+    @Field()
+    readonly updated: string;
+
+    @Field(() => [TodoDto], { nullable: true })
+    readonly arrtodos?: TodoDto[];
 }
 
 @InputType({ description: 'createTodo' })

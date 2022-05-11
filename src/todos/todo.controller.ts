@@ -28,6 +28,11 @@ export class TodoController {
         return await this.todoService.getById(id);
     }
 
+    @Get('detail/:id')
+    async getSubtods(@Param('id', ParseIntPipe) id: number): Promise<Todo[]> {
+        return await this.todoService.getSubtodosByGrpId(id);
+    }
+
     ///////////////////////////////////////
     // for TEST
 

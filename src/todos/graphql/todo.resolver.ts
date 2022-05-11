@@ -1,9 +1,10 @@
 import { Query, Resolver, Mutation, Args, Int, Parent, ResolveField } from '@nestjs/graphql';
 import { TodoService } from '../todo.service';
-import { TodoDto, CreateTodoDto, UpdateTodoDto, SubtodoDto } from './todo.dto';
+import { TodoDto, CreateTodoDto, UpdateTodoDto, TodoDetailDto } from './todo.dto';
 import { Todo } from '../model/todo.entity';
+import { defaultFieldResolver } from 'graphql';
 
-@Resolver('Todo')   // (() => TodoDto)
+@Resolver(() => TodoDto)
 export class TodoResolver {
 
     constructor(
@@ -59,6 +60,23 @@ query {
     async getTodo(@Args('id', { type: () => Int }) id: number) {
         return await this.todoService.getById(id);
     }
+
+    @Query(() => TodoDetailDto, { name: "todoDetail" })
+    async getTodoDetail(@Args('id', { type: () => Int }) id: number) {
+        console.log('getTodoDetail: id=', id);
+        return await this.todoService.getDetail(id);
+    }
+
+    /*
+    // TodoDetailDto 의 arrtodos 필드와 연결이 되지 않는다
+    // ==> 강제로 넣는 수밖에
+    @ResolveField('arrtodos', returns => [TodoDto])
+    async getArrtodos(@Parent() todo: TodoDetailDto) {
+        console.log('grp_todo:', todo);
+        const { id } = todo;
+        return await this.todoService.getSubtodosByGrpId(id);
+    }
+    */
 
     /*
 mutation {

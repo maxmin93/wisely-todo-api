@@ -17,13 +17,24 @@ type Mutation {
 type Query {
   todo(id: Int!): TodoDto!
   todoAll: [TodoDto!]!
+  todoDetail(id: Int!): TodoDetailDto!
   todos(ids: [Int!]!): [TodoDto!]!
 }
 
-"""Sub-todo"""
+"""Sub-todo ID"""
 type SubtodoDto {
   id: Int
   sub_id: Int!
+}
+
+"""Todo Detail"""
+type TodoDetailDto {
+  arrtodos: [TodoDto!]
+  created: String!
+  done: Boolean!
+  id: Int!
+  name: String!
+  updated: String!
 }
 
 """Todo List"""
@@ -32,6 +43,8 @@ type TodoDto {
   done: Boolean!
   id: Int!
   name: String!
+
+  """only IDs"""
   subtodos: [SubtodoDto!]!
   updated: String!
 }

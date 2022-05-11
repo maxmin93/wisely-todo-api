@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Todo } from './model/todo.entity';
 import { Subtodo } from './model/subtodo.entity';
-import { TodoDto, CreateTodoDto, UpdateTodoDto } from './graphql/todo.dto';
+import { TodoDto, CreateTodoDto, UpdateTodoDto, TodoDetailDto } from './graphql/todo.dto';
 
 @Injectable()
 export class TodoService {
@@ -79,10 +79,28 @@ FROM "todo" "Todo"
         return await this.todoRepository.findOne(id, { relations: ["subtodos"] });
     }
 
-    async getSubtodosByGrpId(id: number): Promise<Subtodo[]> {
-        return await this.subtodoRepository.createQueryBuilder("subtodo")
+    async getDetail(id: number): Promise<TodoDetailDto> {
+        const todo = await this.todoRepository.findOne(id, { relations: ["subtodos"] });
+        const ids: number[] = await this.subtodoRepository.createQueryBuilder("subtodo")
             .where("grp_id = :grp_id", { grp_id: id })
-            .getMany();
+            .select('subtodo.sub_id')
+            .distinct()
+            .getMany()
+            .then(r => Promise.resolve(r.map(t => t.sub_id)));
+        console.log(`subtodos[${id}]:`, ids);
+        todo.arrtodos = await this.todoRepository.findByIds(ids);
+        return todo;
+    }
+
+    async getSubtodosByGrpId(id: number): Promise<Todo[]> {
+        const ids: number[] = await this.subtodoRepository.createQueryBuilder("subtodo")
+            .where("grp_id = :grp_id", { grp_id: id })
+            .select('subtodo.sub_id')
+            .distinct()
+            .getMany()
+            .then(r => Promise.resolve(r.map(t => t.sub_id)));
+        console.log(`subtodos[${id}]:`, ids);
+        return await this.todoRepository.findByIds(ids);
     }
 
 }
